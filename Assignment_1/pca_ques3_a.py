@@ -10,8 +10,8 @@ def f(x):
 x = np.linspace(0, 10, 1000)
 fig1 = plt.gcf()
 plt.axes().set_aspect('equal')
-plt.xlim(0,7)
-plt.ylim(0.5,5)
+plt.xlim(0,10)
+plt.ylim(0,10)
 c1 = np.array([[2,1],[2,2],[2,3]])
 c2 = np.array([[4,3],[5,3],[6,4]])
 c3 = [3.5, 8/3]
