@@ -1,0 +1,40 @@
+function eigenface(person)
+    tic;
+    I = zeros(2576,10);
+    data = load('Facedata.mat');
+    for i = 1:10
+        im = data.facedata{person,i};
+        I(:,i) = im(:);
+    end
+    
+    I_mean = mean(I,2);
+    
+
+    cov_mat = cov(transpose(I));    
+
+    [V,D] = eig(cov_mat);
+
+    d=diag(D);
+    significant_eigen = d(d > 0.1);
+    eigen_vec_sig = V(:,d > 0.1);
+    [significant_eigen,idx]=sort(significant_eigen,'descend');
+    eigen_vec = eigen_vec_sig(:,idx)
+
+    num_eigen=size(significant_eigen, 1);
+    mi = min(eigen_vec); ma = max(eigen_vec);
+    eigen_vec = (eigen_vec - mi) ./ (ma - mi);
+    eigen_vec = reshape(eigen_vec, 56,46,num_eigen);
+    
+    tiledlayout(1,1+num_eigen); 
+    nexttile;
+    imshow(reshape(uint8(I_mean),56,46));
+    title('Mean-face');
+    hold on;
+    for i=1:num_eigen
+        nexttile;
+        imshow(eigen_vec(:,:,i));
+        title(sprintf('Eigenface%02d',i));
+    end
+    
+    toc
+end
