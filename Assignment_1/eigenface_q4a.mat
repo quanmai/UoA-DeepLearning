@@ -1,4 +1,4 @@
-function eigenface(person)
+function eigenface_q4a(person)
     tic;
     I = zeros(2576,10);
     data = load('Facedata.mat');
