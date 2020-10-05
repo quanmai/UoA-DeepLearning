@@ -1,0 +1,46 @@
+function eigenface_q4g(person)
+
+%Reconstruct face using eigenspace
+    tic;
+    I = zeros(2576,10);
+    data = load('Facedata.mat');
+    for i = 1:10
+        im = data.facedata{person,i};
+        I(:,i) = im(:);
+    end
+    
+    I_mean = mean(I,2);
+    
+    I_zero_mean = I - I_mean;
+    cov_mat = I_zero_mean' * I_zero_mean;
+    
+    [V,D] = eig(cov_mat);
+    
+    [d,idx]=sort(diag(D),'descend');
+    eigen_vec = V(:,idx);
+    eigen_vec = I_zero_mean * eigen_vec;
+    
+    original = I(:,person);
+    sel = I_zero_mean(:,person); %first image of first person
+    
+    tiledlayout(3,3); 
+    
+    for n=1:9
+        nexttile;
+        coeff = eigen_vec(:,1:n)' * sel;  % 9*2576 * 2576*1
+        coeff_mat = repmat(coeff',2576,1);
+        image = eigen_vec(:,1:n) .* coeff_mat;
+        image = I_mean + sum(image,2);
+        
+        mse = sum(((original - image).^2))./2756;
+        
+        image = (image - min(image))./(max(image) -min(image));
+        image = reshape(image, 56,46);
+        imshow(image);
+        get_n = [sprintf('n=%01d',n)];
+        get_mse = [sprintf('   MSE=%9.2E',mse)];
+        name = strcat(get_n, get_mse)
+        title(name);
+    end
+    
+end
